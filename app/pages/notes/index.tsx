@@ -1,7 +1,17 @@
 import { Suspense } from "react"
-import { Head, Link, usePaginatedQuery, useRouter, BlitzPage, Routes, useSession } from "blitz"
+import {
+  Head,
+  Link,
+  usePaginatedQuery,
+  useRouter,
+  BlitzPage,
+  Routes,
+  useSession,
+  useMutation,
+} from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getNotes from "app/notes/queries/getNotes"
+import logout from "../../auth/mutations/logout"
 
 const ITEMS_PER_PAGE = 100
 
@@ -42,11 +52,21 @@ export const NotesList = () => {
 }
 
 const NotesPage: BlitzPage = () => {
+  const [logoutMutation] = useMutation(logout)
+
   return (
     <>
-      <Head>
+      <div>
         <title>Notes</title>
-      </Head>
+        <button
+          className="button small"
+          onClick={async () => {
+            await logoutMutation()
+          }}
+        >
+          Logout
+        </button>
+      </div>
 
       <div>
         <p>
