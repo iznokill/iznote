@@ -37,7 +37,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import deleteNote from "../../notes/mutations/deleteNote"
 
-const ITEMS_PER_PAGE = 100
+const ITEMS_PER_PAGE = 10
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
