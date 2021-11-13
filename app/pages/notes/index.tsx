@@ -1,13 +1,5 @@
-import { Suspense } from "react"
-import {
-  usePaginatedQuery,
-  useRouter,
-  BlitzPage,
-  useSession,
-  useMutation,
-  Routes,
-  Link,
-} from "blitz"
+import { Suspense, useState } from "react"
+import { usePaginatedQuery, useRouter, BlitzPage, useSession, useMutation, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getNotes from "app/notes/queries/getNotes"
 import logout from "../../auth/mutations/logout"
@@ -20,7 +12,6 @@ import SearchIcon from "@mui/icons-material/Search"
 import {
   styled,
   alpha,
-  Fab,
   List,
   ListItemText,
   ListItem,
@@ -36,6 +27,7 @@ import FolderIcon from "@mui/icons-material/Folder"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import deleteNote from "../../notes/mutations/deleteNote"
+import CloseIcon from "@mui/icons-material/Close"
 
 const ITEMS_PER_PAGE = 10
 
@@ -65,6 +57,17 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   justifyContent: "center",
 }))
 
+const CloseIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "fill",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 10,
+}))
+
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
@@ -78,17 +81,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }))
-const StyledFab = styled(Fab)({
-  zIndex: 1,
-})
 
-export const NotesList = ({ onDelete }) => {
+export const NotesList = ({ onDelete, searchInput }) => {
   const router = useRouter()
   const session = useSession()
   const page = Number(router.query.page) || 0
   const [{ notes, hasMore }] = usePaginatedQuery(getNotes, {
     orderBy: { id: "asc" },
-    where: { userId: session?.userId || -1 },
+    where:
+      searchInput !== ""
+        ? {
+            userId: session?.userId || -1,
+            name: {
+              startsWith: searchInput,
+            },
+          }
+        : { userId: session?.userId || -1 },
     skip: ITEMS_PER_PAGE * page,
     take: ITEMS_PER_PAGE,
   })
@@ -139,33 +147,13 @@ export const NotesList = ({ onDelete }) => {
       </Stack>
     </>
   )
-
-  /*return (
-    <div>
-      <ul>
-        {notes.map((note) => (
-          <li key={note.id}>
-            <Link href={Routes.ShowNotePage({ noteId: note.id })}>
-              <a>{note.name}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      <button disabled={page === 0} onClick={goToPreviousPage}>
-        Previous
-      </button>
-      <button disabled={!hasMore} onClick={goToNextPage}>
-        Next
-      </button>
-    </div>
-  )*/
 }
 
 const NotesPage: BlitzPage = () => {
+  const router = useRouter()
   const [logoutMutation] = useMutation(logout)
   const [deleteNoteMutation] = useMutation(deleteNote)
-  const router = useRouter()
+  const [searchInput, setSearchInput] = useState({ filled: false, value: "" })
   return (
     <>
       <Box sx={{ flexGrow: 1, mb: 2 }}>
@@ -189,10 +177,27 @@ const NotesPage: BlitzPage = () => {
               Notes
             </Typography>
             <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase placeholder="Search…" inputProps={{ "aria-label": "search" }} />
+              {searchInput.filled ? (
+                <CloseIconWrapper>
+                  <CloseIcon
+                    onClick={() => {
+                      setSearchInput({ filled: false, value: "" })
+                    }}
+                  />
+                </CloseIconWrapper>
+              ) : (
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+              )}
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+                value={searchInput.value}
+                onChange={(e) => {
+                  setSearchInput({ filled: e.target.value !== "", value: e.target.value })
+                }}
+              />
             </Search>
             <Button
               color="inherit"
@@ -211,7 +216,7 @@ const NotesPage: BlitzPage = () => {
           New
         </Button>
         <Suspense fallback={<div>Loading...</div>}>
-          <NotesList onDelete={deleteNoteMutation} />
+          <NotesList onDelete={deleteNoteMutation} searchInput={searchInput.value} />
         </Suspense>
       </div>
     </>
