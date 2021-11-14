@@ -1,17 +1,7 @@
-import { Suspense } from "react"
-import {
-  Link,
-  useRouter,
-  useMutation,
-  BlitzPage,
-  Routes,
-  useSession,
-  useQuery,
-  AuthenticationError,
-} from "blitz"
+import { useRouter, useMutation, BlitzPage, Routes, useSession } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import createNote from "app/notes/mutations/createNote"
-import { NoteForm, FORM_ERROR } from "app/notes/components/NoteForm"
+import { FORM_ERROR } from "app/notes/components/NoteForm"
 import Box from "@mui/material/Box"
 import AppBar from "@mui/material/AppBar"
 import Toolbar from "@mui/material/Toolbar"
@@ -23,16 +13,33 @@ import NotesIcon from "@mui/icons-material/Notes"
 import TextField from "@mui/material/TextField"
 import * as React from "react"
 import { WithContext as Tags } from "react-tag-input"
-import getNotes from "../../notes/queries/getNotes"
+import { createUseStyles } from "react-jss"
 
 const KeyCodes = {
   comma: 188,
   enter: [10, 13],
 }
 
+const useStyles = createUseStyles({
+  reactTag: {},
+  tags: {
+    position: "relative",
+  },
+  tagInput: { borderRadius: 2, display: "inline-block" },
+  tagInputField: { height: 31, fontSize: 17, minWidth: 150, width: "100%" },
+  selected: {
+    fontSize: 18,
+    fontWeight: "bold",
+    display: "inline-block",
+    borderRadius: 2,
+  },
+  remove: { border: "none", cursor: "pointer", background: "none", color: "black", fontSize: 18 },
+})
+
 const delimiters = [...KeyCodes.enter, KeyCodes.comma]
 
 const NewNotePage: BlitzPage = () => {
+  const classes = useStyles()
   const router = useRouter()
   const [createNoteMutation] = useMutation(createNote)
   const [logoutMutation] = useMutation(logout)
@@ -134,7 +141,15 @@ const NewNotePage: BlitzPage = () => {
             handleAddition={handleAddition}
             handleDrag={handleDrag}
             delimiters={delimiters}
-            inline
+            inputFieldPosition="inline"
+            classNames={{
+              tagInputField: classes.tagInputField,
+              tags: classes.tags,
+              tagInput: classes.tagInput,
+              selected: classes.selected,
+              remove: classes.remove,
+            }}
+            placeholder="   Add tags"
           />
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             Create
