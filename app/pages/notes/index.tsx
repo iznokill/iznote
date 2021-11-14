@@ -86,7 +86,7 @@ export const NotesList = ({ onDelete, searchInput }) => {
   const router = useRouter()
   const session = useSession()
   const page = Number(router.query.page) || 0
-  const [{ notes, hasMore }] = usePaginatedQuery(getNotes, {
+  const [{ notes, hasMore }, { refetch }] = usePaginatedQuery(getNotes, {
     orderBy: { updatedAt: "asc" },
     where:
       searchInput !== ""
@@ -107,7 +107,7 @@ export const NotesList = ({ onDelete, searchInput }) => {
   const deleteNote = async (id) => {
     if (window.confirm("This will be deleted")) {
       await onDelete({ id: id })
-      router.push(Routes.NotesPage())
+      await refetch()
     }
   }
 
