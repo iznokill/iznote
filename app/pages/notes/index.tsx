@@ -7,7 +7,6 @@ import Box from "@mui/material/Box"
 import Toolbar from "@mui/material/Toolbar"
 import IconButton from "@mui/material/IconButton"
 import Typography from "@mui/material/Typography"
-import MenuIcon from "@mui/icons-material/Menu"
 import SearchIcon from "@mui/icons-material/Search"
 import {
   styled,
@@ -28,6 +27,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import deleteNote from "../../notes/mutations/deleteNote"
 import CloseIcon from "@mui/icons-material/Close"
+import NotesIcon from "@mui/icons-material/Notes"
 
 const ITEMS_PER_PAGE = 10
 
@@ -87,7 +87,7 @@ export const NotesList = ({ onDelete, searchInput }) => {
   const session = useSession()
   const page = Number(router.query.page) || 0
   const [{ notes, hasMore }] = usePaginatedQuery(getNotes, {
-    orderBy: { id: "asc" },
+    orderBy: { updatedAt: "asc" },
     where:
       searchInput !== ""
         ? {
@@ -106,7 +106,7 @@ export const NotesList = ({ onDelete, searchInput }) => {
   const editNote = (id) => router.push(`/notes/${id}/edit`)
   const deleteNote = async (id) => {
     if (window.confirm("This will be deleted")) {
-      onDelete({ id: id })
+      await onDelete({ id: id })
       router.push(Routes.NotesPage())
     }
   }
@@ -166,7 +166,7 @@ const NotesPage: BlitzPage = () => {
               aria-label="open drawer"
               sx={{ mr: 2 }}
             >
-              <MenuIcon />
+              <NotesIcon />
             </IconButton>
             <Typography
               variant="h6"

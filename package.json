@@ -31,8 +31,11 @@
     "blitz": "0.42.4",
     "final-form": "4.20.4",
     "react": "18.0.0-alpha-5ca4b0433-20211020",
+    "react-dnd": "14.0.4",
+    "react-dnd-html5-backend": "14.0.2",
     "react-dom": "18.0.0-alpha-5ca4b0433-20211020",
     "react-final-form": "6.5.7",
+    "react-tag-input": "6.7.3",
     "zod": "3.11.6"
   },
   "devDependencies": {
