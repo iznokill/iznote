@@ -71,4 +71,14 @@ model Note {
   name      String
   content   String
   userId    Int
+  tags      Tag[]
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  Note      Note?    @relation(fields: [noteId], references: [id])
+  noteId    Int?
 }

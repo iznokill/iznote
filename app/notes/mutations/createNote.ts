@@ -6,6 +6,7 @@ const CreateNote = z.object({
   name: z.string(),
   content: z.string(),
   userId: z.number(),
+  tags: z.array(z.string()),
 })
 
 export default resolver.pipe(resolver.zod(CreateNote), resolver.authorize(), async (input) => {
