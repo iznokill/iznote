@@ -106,7 +106,7 @@ export const NotesList = ({ onDelete, searchInput }) => {
   const editNote = (id) => router.push(`/notes/${id}/edit`)
   const deleteNote = async (id) => {
     if (window.confirm("This will be deleted")) {
-      await onDelete({ id: id })
+      onDelete({ id: id })
       router.push(Routes.NotesPage())
     }
   }
