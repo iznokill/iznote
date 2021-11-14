@@ -44,18 +44,18 @@ const NewNotePage: BlitzPage = () => {
   const [createNoteMutation] = useMutation(createNote)
   const [logoutMutation] = useMutation(logout)
   const session = useSession()
-  const [tags, setTags] = React.useState<string[]>([])
+  const [tags, setTags] = React.useState<{ id: string; text: string }[]>([])
 
   const handleDelete = (i) => {
     setTags(tags.filter((tag, index) => index !== i))
   }
   const handleAddition = (tag) => {
-    setTags([...tags, tag])
+    setTags([...tags, { id: tag.id, text: tag.text }])
   }
   const handleDrag = (tag, currPos, newPos) => {
     const newTags = tags.slice()
     newTags.splice(currPos, 1)
-    newTags.splice(newPos, 0, tag)
+    newTags.splice(newPos, 0, { id: tag.id, text: tag.text })
     setTags(newTags)
   }
 
@@ -65,7 +65,7 @@ const NewNotePage: BlitzPage = () => {
     try {
       const note = await createNoteMutation({
         name: data.get("name")?.toString() || "",
-        tags: tags.join(","),
+        tags: tags.map((tag) => tag.text).join(","),
         userId: session?.userId || -1,
         content: "",
       })

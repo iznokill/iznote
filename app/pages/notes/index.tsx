@@ -133,7 +133,7 @@ export const NotesList = ({ onDelete, searchInput }) => {
                 <FolderIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={note.name} secondary={"à venir"} />
+            <ListItemText primary={note.name} secondary={note.tags.replace(",", " ")} />
           </ListItem>
         ))}
       </List>
