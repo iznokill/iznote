@@ -95,10 +95,20 @@ export const NotesList = ({ onDelete, searchInput }) => {
     where:
       searchInput !== ""
         ? {
-            userId: session?.userId || -1,
-            name: {
-              startsWith: searchInput,
-            },
+            OR: [
+              {
+                userId: session?.userId || -1,
+                name: {
+                  startsWith: searchInput,
+                },
+              },
+              {
+                userId: session?.userId || -1,
+                tags: {
+                  contains: searchInput,
+                },
+              },
+            ],
           }
         : { userId: session?.userId || -1 },
     skip: ITEMS_PER_PAGE * page,
@@ -150,6 +160,7 @@ export const NotesList = ({ onDelete, searchInput }) => {
                         margin: 4,
                         padding: 4,
                         color: "white",
+                        borderRadius: 6,
                       }}
                     >
                       {tag}
