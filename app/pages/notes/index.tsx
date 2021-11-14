@@ -82,6 +82,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }))
 
+const randomColor = () => {
+  return "#" + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)
+}
+
 export const NotesList = ({ onDelete, searchInput }) => {
   const router = useRouter()
   const session = useSession()
@@ -133,7 +137,27 @@ export const NotesList = ({ onDelete, searchInput }) => {
                 <FolderIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={note.name} secondary={note.tags.replace(",", " ")} />
+            <ListItemText
+              primary={note.name}
+              secondary={
+                <>
+                  {note.tags.split(",").map((tag) => (
+                    <div
+                      key={tag}
+                      style={{
+                        background: randomColor(),
+                        float: "left",
+                        margin: 4,
+                        padding: 4,
+                        color: "white",
+                      }}
+                    >
+                      {tag}
+                    </div>
+                  ))}
+                </>
+              }
+            />
           </ListItem>
         ))}
       </List>
